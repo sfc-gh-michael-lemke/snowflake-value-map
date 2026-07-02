@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Organization (Snowflake Inc.) - Snowflake Value Map Study</title>
+<style>
+:root {
+  --snow-blue: #29B5E8;
+  --snow-dark: #1B2A4A;
+  --snow-light: #F4F8FB;
+  --sidebar-width: 280px;
+  --ready-green: #10B981;
+  --near-amber: #F59E0B;
+  --gap-red: #EF4444;
+  --na-gray: #9CA3AF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1F2937; line-height: 1.6; background: #fff; }
+.sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh; overflow-y: auto; background: var(--snow-dark); color: #CBD5E1; padding: 24px 16px; z-index: 100; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
+.sidebar .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #334155; }
+.sidebar .logo svg { width: 28px; height: 28px; }
+.sidebar .logo span { font-size: 14px; font-weight: 600; color: #fff; }
+.sidebar nav ul { list-style: none; }
+.sidebar nav > ul > li { margin-bottom: 4px; }
+.sidebar nav a { display: block; padding: 6px 10px; color: #94A3B8; text-decoration: none; font-size: 13px; border-radius: 4px; transition: all 0.15s; }
+.sidebar nav a:hover { color: #fff; background: #334155; }
+.sidebar nav a.active { color: var(--snow-blue); background: rgba(41,181,232,0.1); }
+.sidebar nav .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748B; padding: 12px 10px 4px; font-weight: 600; }
+.sidebar nav ul ul { padding-left: 12px; }
+.sidebar nav ul ul a { font-size: 12px; padding: 4px 10px; }
+.main { margin-left: var(--sidebar-width); padding: 40px 60px; max-width: 1100px; }
+h1 { font-size: 32px; color: var(--snow-dark); margin-bottom: 8px; }
+.subtitle { font-size: 14px; color: #64748B; margin-bottom: 32px; }
+h2 { font-size: 22px; color: var(--snow-dark); margin-top: 48px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--snow-blue); }
+h3 { font-size: 17px; color: #374151; margin-top: 28px; margin-bottom: 12px; }
+h4 { font-size: 15px; color: #1F2937; margin-top: 20px; margin-bottom: 8px; }
+p, li { font-size: 14px; margin-bottom: 8px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+strong { color: #111827; }
+.score-card { display: flex; gap: 16px; margin: 20px 0; flex-wrap: wrap; }
+.score-item { background: var(--snow-light); border-radius: 8px; padding: 16px 20px; text-align: center; min-width: 140px; }
+.score-item .number { font-size: 28px; font-weight: 700; color: var(--snow-dark); }
+.score-item .label { font-size: 11px; text-transform: uppercase; color: #64748B; margin-top: 4px; }
+.score-item.ready .number { color: var(--ready-green); }
+.score-item.near .number { color: var(--near-amber); }
+.score-item.gap .number { color: var(--gap-red); }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+th { background: var(--snow-light); color: var(--snow-dark); font-weight: 600; text-align: left; padding: 10px 12px; border-bottom: 2px solid #E5E7EB; }
+td { padding: 8px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+tr:hover td { background: #F9FAFB; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.badge-ready { background: #D1FAE5; color: #065F46; }
+.badge-near { background: #FEF3C7; color: #92400E; }
+.badge-gap { background: #FEE2E2; color: #991B1B; }
+.badge-na { background: #F3F4F6; color: #6B7280; }
+.badge-ds { background: #DBEAFE; color: #1E40AF; }
+.uc-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px 24px; margin: 16px 0; border-left: 4px solid var(--ready-green); }
+.uc-card.near { border-left-color: var(--near-amber); }
+.uc-card.ds { border-left-color: var(--snow-blue); }
+.uc-card h4 { margin-top: 0; font-size: 16px; }
+.uc-card .meta { font-size: 12px; color: #6B7280; margin-bottom: 12px; }
+.pill-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.pill { display: inline-block; padding: 3px 10px; background: rgba(41,181,232,0.1); color: var(--snow-blue); border-radius: 12px; font-size: 11px; font-weight: 500; }
+.phase-header { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.phase-1 { background: #D1FAE5; color: #065F46; }
+.phase-2 { background: #DBEAFE; color: #1E40AF; }
+.phase-3 { background: #FEF3C7; color: #92400E; }
+.effort-low { color: var(--ready-green); font-weight: 600; }
+.effort-med { color: var(--near-amber); font-weight: 600; }
+.effort-high { color: var(--gap-red); font-weight: 600; }
+.warning-box { background: #FFFBEB; border: 1px solid #FCD34D; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #78350F; margin: 12px 0; }
+hr { border: none; border-top: 1px solid #E5E7EB; margin: 32px 0; }
+@media print { .sidebar { display: none; } .main { margin-left: 0; padding: 20px; } }
+@media (max-width: 900px) { .sidebar { width: 100%; height: auto; position: relative; } .main { margin-left: 0; padding: 20px; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#29B5E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Snowflake Inc. Value Map</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#executive-summary">Executive Summary</a></li>
+      <li><div class="section-title">Assessment</div></li>
+      <li><a href="#strategic-goals">1. Strategic Goals</a></li>
+      <li>
+        <a href="#deployment">2. Deployment</a>
+        <ul>
+          <li><a href="#gold-inventory">2.1 Gold Inventory</a></li>
+          <li><a href="#retl-interfaces">2.2 Reverse ETL</a></li>
+          <li><a href="#domains">2.3 Domain Coverage</a></li>
+        </ul>
+      </li>
+      <li><div class="section-title">Use Cases</div></li>
+      <li>
+        <a href="#fit-matrix">3. Fit Matrix</a>
+        <ul>
+          <li><a href="#ready">3.2 READY (Deploy Now)</a></li>
+          <li><a href="#near">3.3 NEAR (Minor Gaps)</a></li>
+          <li><a href="#gap-cases">3.4 GAP</a></li>
+        </ul>
+      </li>
+      <li><div class="section-title">Analysis</div></li>
+      <li>
+        <a href="#gap-analysis">4. Gap Analysis</a>
+        <ul>
+          <li><a href="#data-gaps">4.1 Data Gaps</a></li>
+          <li><a href="#capability-gaps">4.2 Capability Gaps</a></li>
+        </ul>
+      </li>
+      <li><a href="#value-proposition">5. Value Proposition</a></li>
+      <li><a href="#impact">6. Business Impact</a></li>
+      <li><a href="#roadmap">7. Roadmap</a></li>
+      <li><div class="section-title">Appendix</div></li>
+      <li><a href="#feature-matrix">A. Feature Matrix</a></li>
+      <li><a href="#marketplace">B. Marketplace</a></li>
+      <li><a href="#sources">C. External Sources</a></li>
+      <li><a href="#methodology">D. Methodology</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<main class="main">
+
+<h1 id="top">My Organization (Snowflake Inc.) &mdash; Snowflake Value Map Study</h1>
+<p class="subtitle">
+  <strong>Vertical:</strong> Technology / SaaS &nbsp;|&nbsp;
+  <strong>Date:</strong> July 2, 2026 &nbsp;|&nbsp;
+  <strong>Scope:</strong> MDM.MDM_INTERFACES &mdash; 71 tables + 69 views (Gold interface layer) &nbsp;|&nbsp;
+  <strong>Generated by:</strong> Snowflake Value Map Skill | Cortex Code
+</p>
+
+<hr>
+
+<!-- EXECUTIVE SUMMARY -->
+<h2 id="executive-summary">Executive Summary</h2>
+
+<p>My Organization's <strong>MDM.MDM_INTERFACES</strong> schema is a mature, production-grade Master Data Management hub serving as the authoritative source for customer, vendor, employee, and party data across Snowflake's internal operational systems (Salesforce, Workday, ServiceNow, GitHub). The deployment is exceptionally strong for <strong>Third-Party Risk Management</strong>, <strong>360 Account Intelligence</strong>, and <strong>MDM/Entity Resolution</strong> &mdash; three use cases where it is genuinely best-in-class with 4 deployment-specific READY capabilities. Against the 10 canonical Technology/SaaS use cases (which skew toward product telemetry and billing), the canonical fit score is 2.96/10, reflecting that this schema is a <strong>data operations backbone</strong> powering other analytics layers, not a product event store. The three highest-priority opportunities are: (1) activate a vendor risk posture dashboard from already-present SecurityScorecard + Panorays + SOE data, (2) build a Revenue Intelligence EACV waterfall from the rich DIM_USE_CASE + FACT_USE_CASE_STAGE_MOVEMENT already deployed, and (3) connect MDM account master to consumption data to enable Customer Health Scoring.</p>
+
+<div class="score-card">
+  <div class="score-item"><div class="number">2.96/10</div><div class="label">Canonical Fit Score</div></div>
+  <div class="score-item ready"><div class="number">4</div><div class="label">READY (Deployment-Specific)</div></div>
+  <div class="score-item near"><div class="number">5</div><div class="label">NEAR (Minor Gaps)</div></div>
+  <div class="score-item gap"><div class="number">6</div><div class="label">GAP (Canonical)</div></div>
+</div>
+
+<table>
+  <thead><tr><th>Category</th><th>Count</th><th>Weighted Value %</th><th>Priority Use Cases</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge badge-ds">READY (Deployment-Specific)</span></td><td>4</td><td>N/A</td><td>MDM/Entity Resolution, 360 Account Intelligence, Third-Party Risk, Reverse ETL Ops</td></tr>
+    <tr><td><span class="badge badge-near">NEAR</span></td><td>4 canonical + 1 DS</td><td>39%</td><td>Customer Health, Revenue Intelligence, Feature Adoption, Partner Ecosystem, SE Pipeline</td></tr>
+    <tr><td><span class="badge badge-gap">GAP</span></td><td>6 canonical</td><td>61%</td><td>Product-Led Growth, Billing/Metering, Trial Conversion, Support Prediction, Cost Attribution, Perf Analytics</td></tr>
+    <tr><td><span class="badge badge-na">N/A</span></td><td>0</td><td>&mdash;</td><td>&mdash;</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 1. STRATEGIC GOALS -->
+<h2 id="strategic-goals">1. Entity Strategic Goals (Inferred)</h2>
+<p>Based on data investment patterns observed in MDM_INTERFACES:</p>
+
+<table>
+  <thead><tr><th>#</th><th>Strategic Goal</th><th>Evidence from Deployment</th><th>Confidence</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><strong>Unified party identity across all GTM systems</strong></td><td>ADM_GLOBAL_PARTY_SNAPSHOT (3.7B rows, SCD2), SNOWMESH_ENTITY_HIERARCHY_FLAT (1.8M), ULTIMATE_PARTY_MAP — massive investment in entity resolution across SFDC, Workday, ServiceNow, D&B</td><td>High</td></tr>
+    <tr><td>2</td><td><strong>Third-party and vendor risk at scale</strong></td><td>TPCS_SOE_SCREENING_RESULTS (32K), SECURITY_SCORECARD_HISTORY, PANORAYS_HISTORY, LEGAL_ENTITY_DNB_SOURCE (324K DUNS), TPCS_SANCTIONS_PORTFOLIO — end-to-end vendor compliance pipeline</td><td>High</td></tr>
+    <tr><td>3</td><td><strong>Real-time enrichment of SFDC account data</strong></td><td>CRUNCHBASE_MAP_TO_ACCOUNT_SFDC (696K), FACTSET_MAP_TO_ACCOUNT_SFDC (49.5M), SFDC_ACCOUNT_CONSOLIDATED_INDUSTRY (360K), SAI_PILOT_TECH_STACK (23K), 15+ RETL interfaces to SFDC</td><td>High</td></tr>
+    <tr><td>4</td><td><strong>Sales pipeline intelligence by use case</strong></td><td>DIM_USE_CASE (97.7K with EACV), FACT_USE_CASE_STAGE_MOVEMENT (252K stage transitions), SE assignment tracking, MOVEIN_USE_CASE_EACV</td><td>Medium</td></tr>
+    <tr><td>5</td><td><strong>Engineering productivity visibility</strong></td><td>GITHUB_PULL_REQUEST (4.2M PRs), GITHUB_METRIC (daily per-employee), DIM_EMPLOYEE (Workday + GitHub crosswalk)</td><td>Medium</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 2. DEPLOYMENT ASSESSMENT -->
+<h2 id="deployment">2. Current Deployment Assessment</h2>
+
+<h3 id="gold-inventory">2.1 Gold Layer Inventory (MDM_INTERFACES)</h3>
+<table>
+  <thead><tr><th>Object</th><th>Domain</th><th>Type</th><th>Grain</th><th>Rows</th><th>Health</th></tr></thead>
+  <tbody>
+    <tr><td><strong>ADM_GLOBAL_PARTY_SNAPSHOT</strong></td><td>Party Universe</td><td>DIMENSION (SCD2)</td><td>1 row/party/validity period</td><td>3.7B</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SNOWMESH_ENTITY_HIERARCHY_FLAT</td><td>Party Hierarchy</td><td>REFERENCE</td><td>1 row/entity-ancestor pair</td><td>1.84M</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SNOWMESH_ULTIMATE_PARTY</td><td>Party</td><td>DIMENSION</td><td>1 row/ultimate party</td><td>1.6K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SNOWMESH_COMPANY_CUSTOMER</td><td>Customer</td><td>DIMENSION</td><td>1 row/customer company</td><td>27.3K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SNOWMESH_COMPANY_VENDOR</td><td>Vendor</td><td>DIMENSION</td><td>1 row/vendor company</td><td>6.5K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>CUSTOMER_PARTY_ACCOUNT_MAP_SFDC</td><td>Customer-CRM</td><td>REFERENCE</td><td>1 row/customer-SFDC mapping</td><td>20.1K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>VENDOR_MASTER_MAP</td><td>Vendor</td><td>DIMENSION</td><td>1 row/vendor (all system IDs)</td><td>29.9K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>VENDOR_MASTER_CONTRACT</td><td>Vendor-Legal</td><td>REFERENCE</td><td>1 row/vendor contract</td><td>19.1K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>DIM_EMPLOYEE (view)</td><td>Employee</td><td>DIMENSION</td><td>1 row/employee</td><td>19.9K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td><strong>DIM_USE_CASE (view)</strong></td><td>Sales Pipeline</td><td>FACT</td><td>1 row/Salesforce use case</td><td>97.7K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td><strong>FACT_USE_CASE_STAGE_MOVEMENT (view)</strong></td><td>Sales Pipeline</td><td>FACT</td><td>1 row/use case/stage entry</td><td>252K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>CRUNCHBASE_MAP_TO_ACCOUNT_SFDC</td><td>Customer Enrichment</td><td>REFERENCE</td><td>1 row/SFDC account match</td><td>695.8K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>FACTSET_MAP_TO_ACCOUNT_SFDC</td><td>Financial Enrichment</td><td>REFERENCE</td><td>1 row/SFDC account match</td><td>49.5M</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>LEGAL_ENTITY_DNB_SOURCE</td><td>Identity/Enrichment</td><td>REFERENCE</td><td>1 row/DUNS entity</td><td>324.4K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>PRODUCT_TERMS_ACCEPTANCE_ORGANIZATION</td><td>Product/Legal</td><td>AGGREGATE</td><td>1 row/org/terms type</td><td>67.1K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>TPCS_SOE_SCREENING_RESULTS</td><td>Compliance</td><td>AGGREGATE</td><td>1 row/entity SOE screening</td><td>32.5K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SECURITY_SCORECARD_HISTORY (view)</td><td>Vendor Security</td><td>FACT (SCD2)</td><td>1 row/vendor/score period</td><td>varies</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>PANORAYS_HISTORY (view)</td><td>Vendor Security</td><td>FACT (SCD2)</td><td>1 row/vendor/score period</td><td>varies</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>GITHUB_PULL_REQUEST</td><td>Engineering</td><td>FACT</td><td>1 row/PR</td><td>4.2M</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SAI_PILOT_TECH_STACK</td><td>Customer Intelligence</td><td>REFERENCE</td><td>1 row/org tech item</td><td>23K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SFDC_ACCOUNT_CONSOLIDATED_INDUSTRY</td><td>Customer Firmographic</td><td>AGGREGATE</td><td>1 row/SFDC account</td><td>359.6K</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+    <tr><td>SNOWMESH_DATA</td><td>Override/Ops</td><td>AGGREGATE</td><td>1 row/overrideable record</td><td>1.48M</td><td><span class="badge-ready badge">HEALTHY</span></td></tr>
+  </tbody>
+</table>
+
+<h3 id="retl-interfaces">2.2 Reverse ETL (Output) Interfaces</h3>
+<table>
+  <thead><tr><th>Interface</th><th>Target System</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td>RETL_SDFC_ENRICHMENT_INDUSTRY/EMPLOYEE_COUNT/REVENUE</td><td>Salesforce</td><td>Firmographic enrichment push</td></tr>
+    <tr><td>RETL_SFDC_SOE_STATUS_SYNC</td><td>Salesforce</td><td>SOE compliance status</td></tr>
+    <tr><td>RETL_SFDC_GPU_ENRICHMENT_* (views)</td><td>Salesforce</td><td>GPU enrichment for accounts</td></tr>
+    <tr><td>RETL_SFDC_SAI_TECH_STACK</td><td>Salesforce</td><td>Tech stack sync</td></tr>
+    <tr><td>RETL_SFDC_TPCS_PD_* (views)</td><td>Salesforce</td><td>Third-party procurement compliance</td></tr>
+    <tr><td>RETL_SERVICENOW_ADDRESS_SYNC</td><td>ServiceNow</td><td>Vendor address master sync</td></tr>
+    <tr><td>RETL_SERVICENOW_WORKDAYID/WORKDAYSERVICESTATUS</td><td>ServiceNow</td><td>WD-SN ID linkage + service status</td></tr>
+  </tbody>
+</table>
+
+<h3 id="domains">2.3 Data Domain Coverage</h3>
+<table>
+  <thead><tr><th>Domain</th><th>Gold Objects</th><th>Completeness</th><th>Gaps</th></tr></thead>
+  <tbody>
+    <tr><td>Customer / Party Master</td><td>8 tables + 5 views</td><td>HIGH</td><td>No consumption/usage data</td></tr>
+    <tr><td>Vendor / Supplier</td><td>10 tables</td><td>HIGH</td><td>No spend/PO data</td></tr>
+    <tr><td>Employee / HR</td><td>2 tables + 2 views</td><td>MEDIUM</td><td>No performance review or comp data</td></tr>
+    <tr><td>Sales Pipeline / GTM</td><td>2 views (DIM_USE_CASE, FACT_USE_CASE_STAGE_MOVEMENT)</td><td>HIGH (pipeline); LOW (post-close)</td><td>No deployment/consumption post-close</td></tr>
+    <tr><td>External Enrichment</td><td>5 tables (Crunchbase, FactSet, D&B, S&P, Forbes)</td><td>HIGH</td><td>No NPS/survey, no support ticket data</td></tr>
+    <tr><td>Legal / Compliance</td><td>4 tables + 3 views</td><td>HIGH</td><td>No DPA/GDPR consent tracking</td></tr>
+    <tr><td>Vendor Security</td><td>2 views (SCS, Panorays)</td><td>HIGH</td><td>No continuous monitoring alerts</td></tr>
+    <tr><td>Engineering Activity</td><td>2 tables + 1 view</td><td>MEDIUM</td><td>No CI/CD, deployment frequency, infra cost</td></tr>
+    <tr><td>Product Adoption</td><td>3 tables</td><td>LOW</td><td>Terms acceptance only; no feature usage events</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 3. FIT MATRIX -->
+<h2 id="fit-matrix">3. Use Case Fit Matrix</h2>
+
+<h3>3.1 Summary Matrix (Canonical Technology/SaaS)</h3>
+<table>
+  <thead><tr><th>#</th><th>Use Case</th><th>Impact</th><th>Classification</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Product-Led Growth Analytics</td><td>HIGH</td><td><span class="badge badge-gap">GAP</span></td><td>No product event/telemetry or activation data</td></tr>
+    <tr><td>2</td><td>Customer Health Scoring &amp; Churn Prediction</td><td>HIGH</td><td><span class="badge badge-near">NEAR</span></td><td>Strong account master + contracts + EACV; missing consumption, NPS, support data</td></tr>
+    <tr><td>3</td><td>Usage-Based Billing &amp; Metering</td><td>HIGH</td><td><span class="badge badge-gap">GAP</span></td><td>Has product terms/access controls; no meter events, invoices, credit burn-down</td></tr>
+    <tr><td>4</td><td>Feature Adoption &amp; Engagement</td><td>MEDIUM</td><td><span class="badge badge-near">NEAR</span></td><td>Feature-level org data (legal/product terms); no product event stream</td></tr>
+    <tr><td>5</td><td>Revenue Intelligence (ARR/MRR)</td><td>HIGH</td><td><span class="badge badge-near">NEAR</span></td><td>DIM_USE_CASE + FACT_USE_CASE_STAGE_MOVEMENT provide full EACV waterfall; missing actual billing/NRR</td></tr>
+    <tr><td>6</td><td>Infrastructure Cost Attribution</td><td>MEDIUM</td><td><span class="badge badge-gap">GAP</span></td><td>No cloud billing, resource tagging, or cost center data</td></tr>
+    <tr><td>7</td><td>Support Ticket &amp; Escalation Prediction</td><td>MEDIUM</td><td><span class="badge badge-gap">GAP</span></td><td>ServiceNow integration is vendor/HR only; no customer support tickets</td></tr>
+    <tr><td>8</td><td>Trial-to-Paid Conversion Optimization</td><td>HIGH</td><td><span class="badge badge-gap">GAP</span></td><td>PARTY_CREATION_FUNNEL (20 rows reference only); no trial behavior data</td></tr>
+    <tr><td>9</td><td>Multi-Tenant Performance Analytics</td><td>LOW</td><td><span class="badge badge-gap">GAP</span></td><td>O11Y tables are MDM data quality observability, not platform performance</td></tr>
+    <tr><td>10</td><td>Partner &amp; Marketplace Ecosystem Analytics</td><td>LOW</td><td><span class="badge badge-near">NEAR</span></td><td>VENDOR_MASTER_MAP partner_flag; SNOWMESH_COMPANY_VENDOR; third-party approval RETL</td></tr>
+    <tr><td colspan="5" style="background:#EFF6FF; font-size:12px; color:#1E40AF;"><strong>Deployment-Specific Strengths (beyond canonical catalog)</strong></td></tr>
+    <tr><td>DS-1</td><td>Master Data Management &amp; Entity Resolution</td><td>HIGH</td><td><span class="badge badge-ds">READY</span></td><td>This IS the MDM system — 3.7B-row party master, entity hierarchy, name matching</td></tr>
+    <tr><td>DS-2</td><td>360 Account Intelligence (Multi-Source Enrichment)</td><td>HIGH</td><td><span class="badge badge-ds">READY</span></td><td>6 enrichment sources joined to SFDC; Crunchbase, FactSet, D&B, S&P, Forbes, tech stack</td></tr>
+    <tr><td>DS-3</td><td>Third-Party Risk Management &amp; Vendor Compliance</td><td>HIGH</td><td><span class="badge badge-ds">READY</span></td><td>SecurityScorecard + Panorays (SCD2), SOE/sanctions screening, DUNS identity</td></tr>
+    <tr><td>DS-4</td><td>Reverse ETL &amp; Operational Data Sync</td><td>MEDIUM</td><td><span class="badge badge-ds">READY</span></td><td>15+ RETL interfaces to SFDC, ServiceNow, Workday already operational</td></tr>
+    <tr><td>DS-5</td><td>SE Pipeline Intelligence</td><td>HIGH</td><td><span class="badge badge-near">NEAR</span></td><td>97.7K use cases + 252K stage movements with EACV; needs Cortex Analyst semantic layer</td></tr>
+  </tbody>
+</table>
+
+<h3 id="ready">3.2 READY Use Cases &mdash; Deployment-Specific</h3>
+
+<div class="uc-card ds">
+  <h4>[DS-1] Master Data Management &amp; Entity Resolution</h4>
+  <div class="meta">Classification: <span class="badge badge-ds">READY</span> &nbsp;|&nbsp; Impact: HIGH &nbsp;|&nbsp; Effort: <span class="effort-low">Low (already operational)</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> ADM_GLOBAL_PARTY_SNAPSHOT (3.7B, SCD2), SNOWMESH_ENTITY_HIERARCHY_FLAT (1.84M), SNOWMESH_ULTIMATE_PARTY, SNOWMESH_NAME_MATCH_RESULTS, ULTIMATE_PARTY_MAP, SNOWMESH_EXCEPTIONS (19.5K)</li>
+    <li><strong>Why Ready:</strong> This IS the MDM platform. Snowflake performs entity resolution, hierarchy management, deduplication, and golden record creation across SFDC, Workday, ServiceNow, D&B, Crunchbase, FactSet, and S&P.</li>
+    <li><strong>Next Step:</strong> Expose SNOWMESH_DATA + SNOWMESH_EXCEPTIONS via Cortex Analyst semantic view for real-time override decision-making; add Dynamic Table freshness monitoring with Alerts on ADM_GLOBAL_PARTY_SNAPSHOT.</li>
+    <li><strong>Industry Benchmark:</strong> MDM platforms reduce duplicate records by 20–40%; governance programs cut downstream rework by 30–50%</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Alerts</span>
+    <span class="pill">Cortex Analyst</span>
+    <span class="pill">Data Sharing</span>
+  </div>
+</div>
+
+<div class="uc-card ds">
+  <h4>[DS-2] 360 Account Intelligence with Multi-Source Enrichment</h4>
+  <div class="meta">Classification: <span class="badge badge-ds">READY</span> &nbsp;|&nbsp; Impact: HIGH &nbsp;|&nbsp; Effort: <span class="effort-low">Low</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> CRUNCHBASE_MAP_TO_ACCOUNT_SFDC (696K), FACTSET_MAP_TO_ACCOUNT_SFDC (49.5M), LEGAL_ENTITY_DNB_SOURCE (324K), SFDC_ACCOUNT_CONSOLIDATED_INDUSTRY (360K), SAI_PILOT_TECH_STACK (23K), FORBES_GLOBAL_2000</li>
+    <li><strong>Why Ready:</strong> Six external enrichment sources are joined to SFDC accounts with live RETL pushback — firmographic, financial, tech stack, employee count, industry, and investor data all present and refreshed.</li>
+    <li><strong>Next Step:</strong> Build Cortex Analyst semantic layer for AE/SDR natural language queries ("show me accounts using Databricks with 1000+ employees"); add Cortex AI anomaly flagging on enrichment drift.</li>
+    <li><strong>Industry Benchmark:</strong> Account enrichment improves outbound pipeline conversion by 15–25%; tech stack intelligence reduces competitive cycle by 10–20%</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Cortex Analyst</span>
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Cortex AI</span>
+  </div>
+</div>
+
+<div class="uc-card ds">
+  <h4>[DS-3] Third-Party Risk Management &amp; Vendor Compliance</h4>
+  <div class="meta">Classification: <span class="badge badge-ds">READY</span> &nbsp;|&nbsp; Impact: HIGH &nbsp;|&nbsp; Effort: <span class="effort-low">Low</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> SECURITY_SCORECARD_HISTORY (SCD2), PANORAYS_HISTORY (SCD2), TPCS_SOE_SCREENING_RESULTS (32.5K), TPCS_SANCTIONS_PORTFOLIO_ASSESSMENT_RESULTS, LEGAL_ENTITY_DNB_SOURCE, VENDOR_MASTER_MAP, LEGAL_FEATURE_SECURITY_QUESTIONS</li>
+    <li><strong>Why Ready:</strong> SecurityScorecard + Panorays provide full historical security scoring (SCD2 trend history); SOE/sanctions screening covers 32.5K entities; all linked to the party master via DUNS.</li>
+    <li><strong>Next Step:</strong> Build Dynamic Table for weekly score deltas; Alerts for score drops below threshold; Cortex AI vendor risk narrative summaries per entity; Snowsight vendor risk dashboard.</li>
+    <li><strong>Industry Benchmark:</strong> Proactive vendor risk monitoring reduces third-party breach exposure by 20–35%; automated SOE screening cuts manual review time by 60–80%</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Alerts</span>
+    <span class="pill">Cortex AI (AI_COMPLETE)</span>
+    <span class="pill">Data Sharing</span>
+  </div>
+</div>
+
+<div class="uc-card ds">
+  <h4>[DS-4] Reverse ETL &amp; Operational Data Sync</h4>
+  <div class="meta">Classification: <span class="badge badge-ds">READY</span> &nbsp;|&nbsp; Impact: MEDIUM &nbsp;|&nbsp; Effort: <span class="effort-low">Low (already running)</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> 15+ RETL_* tables/views to SFDC, ServiceNow, and Workday</li>
+    <li><strong>Why Ready:</strong> Snowflake already serves as master pushing enriched data back to operational systems.</li>
+    <li><strong>Next Step:</strong> Migrate RETL interfaces to Snowflake Tasks + Dynamic Tables for declarative, observable pipelines; add Error Tables on RETL outputs for automated failure detection; Snowsight RETL health dashboard.</li>
+    <li><strong>Industry Benchmark:</strong> RETL failures cost $100K–$500K/yr in manual remediation; automated monitoring reduces incident response by 50–70%</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Tasks</span>
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Error Tables</span>
+    <span class="pill">Alerts</span>
+  </div>
+</div>
+
+<h3 id="near">3.3 NEAR Use Cases (Minor Gaps)</h3>
+
+<div class="uc-card near">
+  <h4>[UC-2] Customer Health Scoring &amp; Churn Prediction</h4>
+  <div class="meta">Classification: <span class="badge badge-near">NEAR</span> &nbsp;|&nbsp; Impact: HIGH &nbsp;|&nbsp; Effort: <span class="effort-med">Medium</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> ADM_GLOBAL_PARTY_SNAPSHOT, SNOWMESH_COMPANY_CUSTOMER, CUSTOMER_PARTY_ACCOUNT_MAP_SFDC, DIM_USE_CASE (EACV/stage), PRODUCT_TERMS_ACCEPTANCE_ORGANIZATION, FACTSET_MAP_TO_ACCOUNT_SFDC</li>
+    <li><strong>Gaps to Close:</strong>
+      <ul>
+        <li>Missing: consumption/usage metrics — join Snowhouse ACCOUNT_USAGE to CUSTOMER_PARTY_ACCOUNT_MAP_SFDC</li>
+        <li>Missing: NPS/CSAT data — no customer survey or support sentiment data</li>
+        <li>Missing: support ticket volume — ServiceNow integration is vendor-only</li>
+        <li>Missing: champion contact tracking — DIM_USE_CASE has SE assignment but no executive sponsor field</li>
+      </ul>
+    </li>
+    <li><strong>Effort to Close:</strong> Medium — consumption join is critical path; rest additive</li>
+    <li><strong>Industry Benchmark:</strong> 20–40% reduction in gross churn; 5–15 point improvement in net dollar retention</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Cortex ML</span>
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Alerts</span>
+    <span class="pill">Snowpark</span>
+  </div>
+</div>
+
+<div class="uc-card near">
+  <h4>[UC-5] Revenue Intelligence (ARR/MRR Analytics)</h4>
+  <div class="meta">Classification: <span class="badge badge-near">NEAR</span> &nbsp;|&nbsp; Impact: HIGH &nbsp;|&nbsp; Effort: <span class="effort-med">Low-Medium</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> DIM_USE_CASE (97.7K — EACV, stage, cloud provider, SE assignment), FACT_USE_CASE_STAGE_MOVEMENT (252K — full waterfall with MOVEIN_USE_CASE_EACV), AE_CONTRACT_MAPPING_SFDC, AE_CONTRACT_MAPPING_WD, VENDOR_MASTER_CONTRACT</li>
+    <li><strong>Gaps to Close:</strong>
+      <ul>
+        <li>Missing: actual invoiced/paid ARR — EACV is estimated; need billing to compute net dollar retention</li>
+        <li>Missing: expansion/contraction decomposition — stage movement is pipeline, not post-close ramp</li>
+        <li>Missing: cohort tags — no explicit customer cohort dimension on use cases</li>
+      </ul>
+    </li>
+    <li><strong>Effort to Close:</strong> Low-Medium — EACV waterfall analysis deployable today; billing join is additive</li>
+    <li><strong>Industry Benchmark:</strong> Real-time ARR visibility vs. monthly manual; 10–20% improvement in forecast accuracy</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Snowpark</span>
+    <span class="pill">Cortex ML</span>
+    <span class="pill">Data Sharing</span>
+  </div>
+</div>
+
+<div class="uc-card near">
+  <h4>[DS-5] SE Pipeline Intelligence (Deployment-Specific)</h4>
+  <div class="meta">Classification: <span class="badge badge-near">NEAR</span> &nbsp;|&nbsp; Impact: HIGH &nbsp;|&nbsp; Effort: <span class="effort-low">Low</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> DIM_USE_CASE (EACV, STAGE, CLOUD_PROVIDER, LEAD_SE_ID, technical tags), FACT_USE_CASE_STAGE_MOVEMENT (252K transitions with SE assignments, decision dates, go-live dates)</li>
+    <li><strong>Gaps to Close:</strong>
+      <ul>
+        <li>Missing: post-close consumption — stages end at "Deployed" but no consumption follows</li>
+        <li>Missing: SE-to-win correlation — requires closed-won flag + deal attribution</li>
+      </ul>
+    </li>
+    <li><strong>Effort to Close:</strong> Low — most data present; needs Cortex Analyst semantic view + SE performance dashboard</li>
+    <li><strong>Industry Benchmark:</strong> SE-assisted deals close at 2–3x higher rates; pipeline visibility reduces forecast error by 15–25%</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Cortex Analyst</span>
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Cortex ML (win probability)</span>
+  </div>
+</div>
+
+<div class="uc-card near">
+  <h4>[UC-4] Feature Adoption &amp; Engagement</h4>
+  <div class="meta">Classification: <span class="badge badge-near">NEAR</span> &nbsp;|&nbsp; Impact: MEDIUM &nbsp;|&nbsp; Effort: <span class="effort-med">Medium-High</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> PRODUCT_TERMS_ACCEPTANCE_ORGANIZATION (67K), PRODUCT_DATA_SHARING_TERMS_ORGANIZATION, LEGAL_FEATURE_SECURITY_QUESTIONS, LEGAL_FEATURE_EPIC_THREEWAY, LEGAL_FEATURE_LOGO_USAGE</li>
+    <li><strong>Gaps to Close:</strong>
+      <ul>
+        <li>Missing: product event stream — terms acceptance &ne; feature usage</li>
+        <li>Missing: feature release dates — no product changelog to anchor adoption curves</li>
+        <li>Missing: user-level adoption — current data is org-level</li>
+      </ul>
+    </li>
+    <li><strong>Industry Benchmark:</strong> Data-driven feature prioritization improves feature ROI by 20–40%</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Cortex AI</span>
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Cortex ML</span>
+  </div>
+</div>
+
+<div class="uc-card near">
+  <h4>[UC-10] Partner &amp; Marketplace Ecosystem Analytics</h4>
+  <div class="meta">Classification: <span class="badge badge-near">NEAR</span> &nbsp;|&nbsp; Impact: LOW &nbsp;|&nbsp; Effort: <span class="effort-med">Medium</span></div>
+  <ul>
+    <li><strong>Supporting Objects:</strong> VENDOR_MASTER_MAP (partner_flag), SNOWMESH_COMPANY_VENDOR (6.5K), RETL_SFDC_TPCS_PD_THIRDPARTY_APPROVED/REJECTED_SYNC, CRUNCHBASE_ORGANIZATIONS</li>
+    <li><strong>Gaps to Close:</strong>
+      <ul>
+        <li>Missing: co-sell pipeline linkage — partner_flag on vendor master, no explicit opportunity attribution</li>
+        <li>Missing: integration install data — no API call volumes per partner integration</li>
+      </ul>
+    </li>
+    <li><strong>Industry Benchmark:</strong> 10–25% of SaaS revenue attributable to ecosystem; 15–30% lower churn for 2+ integrations</li>
+  </ul>
+  <div class="pill-list">
+    <span class="pill">Data Sharing</span>
+    <span class="pill">Dynamic Tables</span>
+    <span class="pill">Snowpark</span>
+  </div>
+</div>
+
+<h3 id="gap-cases">3.4 GAP Use Cases (Significant Work Required)</h3>
+<table>
+  <thead><tr><th>Use Case</th><th>Missing</th><th>Path</th><th>Effort</th><th>Strategic Value</th></tr></thead>
+  <tbody>
+    <tr><td><strong>UC-1: Product-Led Growth</strong></td><td>Product event stream, activation milestones, funnel data</td><td>Snowpipe Streaming from platform events → Dynamic Table funnels → Cortex ML propensity</td><td><span class="effort-high">High</span></td><td>15–30% activation rate improvement</td></tr>
+    <tr><td><strong>UC-3: Usage-Based Billing</strong></td><td>Meter events, invoices, credit burn-down, plan/tier</td><td>Expose ACCOUNT_USAGE.METERING_HISTORY → Usage aggregate Dynamic Table → Alerts</td><td><span class="effort-high">High</span></td><td>10–20% revenue uplift from usage transparency</td></tr>
+    <tr><td><strong>UC-6: Infra Cost Attribution</strong></td><td>Cloud billing data, resource tagging, cost centers</td><td>Cloud billing exports + ACCOUNT_USAGE → tenant allocation Dynamic Table</td><td><span class="effort-high">High</span></td><td>15–30% cost attribution accuracy improvement</td></tr>
+    <tr><td><strong>UC-7: Support Ticket Prediction</strong></td><td>Customer support ticket metadata, SLA, CSAT, escalation history</td><td>Ingest Salesforce Service Cloud → join to CUSTOMER_PARTY_ACCOUNT_MAP_SFDC → Cortex ML</td><td><span class="effort-high">High</span></td><td>20–35% reduction in escalations</td></tr>
+    <tr><td><strong>UC-8: Trial-to-Paid Conversion</strong></td><td>Trial behavior events, activation milestones, A/B experiments</td><td>Ingest trial telemetry → join to PARTY_CREATION_FUNNEL → Cortex ML conversion model</td><td><span class="effort-high">High</span></td><td>15–30% improvement in trial-to-paid conversion</td></tr>
+    <tr><td><strong>UC-9: Multi-Tenant Perf Analytics</strong></td><td>Per-tenant latency, error rates, SLA data</td><td>ACCOUNT_USAGE.QUERY_HISTORY tenant grain → Dynamic Table SLA monitors → Alerts</td><td><span class="effort-med">Medium</span></td><td>99.9%+ SLA achievement; 30–50% faster incident identification</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 4. GAP ANALYSIS -->
+<h2 id="gap-analysis">4. Gap Analysis</h2>
+
+<h3 id="data-gaps">4.1 Data Gaps</h3>
+<table>
+  <thead><tr><th>Gap ID</th><th>Description</th><th>Use Cases Blocked</th><th>Resolution Path</th><th>Effort</th></tr></thead>
+  <tbody>
+    <tr><td>DG-1</td><td>Product telemetry / event stream absent</td><td>UC-1, UC-4, UC-8</td><td>Snowpipe Streaming from platform</td><td><span class="effort-high">High</span></td></tr>
+    <tr><td>DG-2</td><td>Consumption/usage metrics not in MDM</td><td>UC-2, UC-3, UC-9</td><td>Join to Snowhouse ACCOUNT_USAGE</td><td><span class="effort-med">Medium</span></td></tr>
+    <tr><td>DG-3</td><td>Customer NPS/CSAT/support tickets missing</td><td>UC-2, UC-7</td><td>Ingest Salesforce Service Cloud or Zendesk</td><td><span class="effort-high">High</span></td></tr>
+    <tr><td>DG-4</td><td>Billing/invoice/payment records absent</td><td>UC-3, UC-5</td><td>Expose billing API data</td><td><span class="effort-high">High</span></td></tr>
+    <tr><td>DG-5</td><td>Cloud infrastructure cost data absent</td><td>UC-6</td><td>Cloud billing exports + resource tagging</td><td><span class="effort-high">High</span></td></tr>
+    <tr><td>DG-6</td><td>Champion/executive sponsor contact tracking</td><td>UC-2</td><td>Enrich DIM_USE_CASE from SFDC contact roles</td><td><span class="effort-low">Low</span></td></tr>
+  </tbody>
+</table>
+
+<h3 id="capability-gaps">4.2 Capability Gaps</h3>
+<table>
+  <thead><tr><th>Gap ID</th><th>Description</th><th>Use Cases Blocked</th><th>Snowflake Solution</th><th>Effort</th></tr></thead>
+  <tbody>
+    <tr><td>CG-1</td><td>No real-time event ingestion pipeline</td><td>UC-1, UC-3</td><td>Snowpipe Streaming</td><td><span class="effort-med">Medium</span></td></tr>
+    <tr><td>CG-2</td><td>No health score computation layer</td><td>UC-2</td><td>Cortex ML + Dynamic Tables</td><td><span class="effort-med">Medium</span></td></tr>
+    <tr><td>CG-3</td><td>No semantic layer for NL querying</td><td>DS-2, DS-5</td><td>Cortex Analyst semantic view</td><td><span class="effort-low">Low</span></td></tr>
+    <tr><td>CG-4</td><td>No alerting on vendor risk score drops</td><td>DS-3</td><td>Snowflake Alerts</td><td><span class="effort-low">Low</span></td></tr>
+    <tr><td>CG-5</td><td>No RETL pipeline observability</td><td>DS-4</td><td>Error Tables + Alerts</td><td><span class="effort-low">Low</span></td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 5. VALUE PROPOSITION -->
+<h2 id="value-proposition">5. Snowflake Value Proposition</h2>
+
+<h3>5.1 Feature-to-Gap Mapping</h3>
+<table>
+  <thead><tr><th>Snowflake Feature</th><th>Gaps Addressed</th><th>Use Cases Enabled</th><th>How to Apply</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Cortex Analyst</strong></td><td>CG-3</td><td>DS-2, DS-5, DS-1</td><td>NL queries over MDM enrichment tables and pipeline data — AE/SDR self-service account intelligence</td></tr>
+    <tr><td><strong>Dynamic Tables</strong></td><td>CG-2, CG-5</td><td>UC-2, UC-5, DS-3, DS-4</td><td>Incremental health scores, RETL pipeline observability, weekly vendor risk deltas</td></tr>
+    <tr><td><strong>Cortex ML (Classification / Forecasting)</strong></td><td>CG-2, DG-2</td><td>UC-2, UC-5, DS-5</td><td>Churn risk classification, win probability scoring, revenue forecasting</td></tr>
+    <tr><td><strong>Cortex AI (AI_COMPLETE)</strong></td><td>&mdash;</td><td>DS-3</td><td>Vendor risk narrative summaries per entity from SecurityScorecard + Panorays data</td></tr>
+    <tr><td><strong>Alerts</strong></td><td>CG-4, CG-5</td><td>DS-3, DS-4, UC-2</td><td>Score threshold triggers (vendor risk), RETL failure detection, customer health alerts</td></tr>
+    <tr><td><strong>Snowpipe Streaming</strong></td><td>CG-1</td><td>UC-1, UC-3</td><td>Real-time product event and meter event ingestion</td></tr>
+    <tr><td><strong>Error Tables</strong></td><td>CG-5</td><td>DS-4</td><td>Automated RETL fault detection and DML error logging</td></tr>
+    <tr><td><strong>Data Sharing</strong></td><td>&mdash;</td><td>DS-2, DS-3</td><td>Distribute golden records and vendor risk posture to downstream teams</td></tr>
+    <tr><td><strong>Snowpark</strong></td><td>DG-2</td><td>UC-2, UC-5</td><td>Feature engineering for multi-source health model</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 6. IMPACT -->
+<h2 id="impact">6. Business Impact Assessment</h2>
+
+<div class="warning-box">
+  ⚠ All impact estimates use published industry benchmarks. NOT calibrated to Snowflake Inc.'s revenue, cost structure, or operational maturity. Treat as directional indicators only.
+</div>
+
+<table>
+  <thead><tr><th>Use Case</th><th>Impact Category</th><th>Industry Benchmark Range</th><th>Calibration Data Needed</th></tr></thead>
+  <tbody>
+    <tr><td>DS-2: 360 Account Intelligence</td><td>Revenue Growth</td><td>15–25% outbound conversion improvement</td><td>Current outbound conversion baseline</td></tr>
+    <tr><td>DS-3: Third-Party Risk Mgmt</td><td>Risk Mitigation</td><td>20–35% reduction in third-party breach exposure</td><td>Current vendor risk incident cost</td></tr>
+    <tr><td>DS-4: Reverse ETL Ops</td><td>Operational Efficiency</td><td>50–70% reduction in sync incident response time</td><td>Current RETL failure rate and resolution time</td></tr>
+    <tr><td>UC-2: Customer Health</td><td>Revenue Retention</td><td>20–40% reduction in gross churn</td><td>Current gross/net churn rate</td></tr>
+    <tr><td>UC-5: Revenue Intelligence</td><td>Revenue Predictability</td><td>10–20% forecast accuracy improvement</td><td>Current forecast error rate (MAPE)</td></tr>
+    <tr><td>DS-5: SE Pipeline Intelligence</td><td>Revenue Growth</td><td>15–25% pipeline forecast error reduction</td><td>Current pipeline MAPE vs. actuals</td></tr>
+    <tr><td>DS-1: MDM / Entity Resolution</td><td>Operational Efficiency</td><td>20–40% duplicate reduction; 30–50% less rework</td><td>Current duplicate rate in SFDC</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- 7. ROADMAP -->
+<h2 id="roadmap">7. Recommended Roadmap</h2>
+
+<span class="phase-header phase-1">Phase 1: Quick Wins — Activate Existing Strengths</span>
+<table>
+  <thead><tr><th>#</th><th>Use Case</th><th>Key Actions</th><th>Dependencies</th><th>Expected Impact</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>DS-3: Third-Party Risk Dashboard</td><td>Build Dynamic Table for weekly SecurityScorecard + Panorays deltas; Alerts for score drops; Cortex AI vendor risk summaries</td><td>None</td><td>20–35% breach exposure reduction</td></tr>
+    <tr><td>2</td><td>DS-2: 360 Account Intelligence Semantic View</td><td>Build Cortex Analyst semantic view over Crunchbase + FactSet + industry + tech stack</td><td>None</td><td>AE/SDR NL querying; 15–25% conversion improvement</td></tr>
+    <tr><td>3</td><td>DS-4: RETL Pipeline Observability</td><td>Add Error Tables and Alerts to RETL sync interfaces; Snowsight RETL health dashboard</td><td>None</td><td>50–70% faster RETL incident resolution</td></tr>
+    <tr><td>4</td><td>DS-1: MDM Data Quality Monitoring</td><td>Dynamic Table–based SLA monitoring on ADM_GLOBAL_PARTY_SNAPSHOT; Alerts on SNOWMESH_EXCEPTIONS growth</td><td>None</td><td>Data quality SLA enforcement</td></tr>
+  </tbody>
+</table>
+
+<span class="phase-header phase-2">Phase 2: Near-Term — Close Key Gaps</span>
+<table>
+  <thead><tr><th>#</th><th>Use Case</th><th>Gaps to Close</th><th>Key Actions</th><th>Expected Impact</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>UC-5: Revenue Intelligence</td><td>DG-4 (billing join), cohort tags</td><td>EACV waterfall in Snowpark; join AE_CONTRACT_MAPPING_SFDC; Dynamic Table ARR bridge</td><td>10–20% forecast accuracy improvement</td></tr>
+    <tr><td>2</td><td>DS-5: SE Pipeline Intelligence</td><td>SE attribution model</td><td>Cortex Analyst semantic view over DIM_USE_CASE + FACT_USE_CASE_STAGE_MOVEMENT; SE win-rate model</td><td>15–25% pipeline forecast improvement</td></tr>
+    <tr><td>3</td><td>UC-2: Customer Health Score</td><td>DG-2 (consumption join), DG-3 (NPS)</td><td>Join Snowhouse ACCOUNT_USAGE to CUSTOMER_PARTY_ACCOUNT_MAP_SFDC; Cortex ML health classifier</td><td>20–40% churn reduction potential</td></tr>
+    <tr><td>4</td><td>UC-10: Partner Ecosystem</td><td>Co-sell linkage</td><td>Enrich VENDOR_MASTER_MAP partner tier; build co-sell attribution model</td><td>Partner revenue visibility</td></tr>
+  </tbody>
+</table>
+
+<span class="phase-header phase-3">Phase 3: Strategic — Build Missing Layers</span>
+<table>
+  <thead><tr><th>#</th><th>Use Case</th><th>Major Investments</th><th>Key Actions</th><th>Expected Impact</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>UC-3: Usage-Based Billing</td><td>Billing API data pipeline</td><td>Connect ACCOUNT_USAGE.METERING_HISTORY; join to product terms</td><td>10–20% revenue uplift from usage transparency</td></tr>
+    <tr><td>2</td><td>UC-1: Product-Led Growth</td><td>Product telemetry ingest</td><td>Snowpipe Streaming from platform events; activation milestone tables</td><td>15–30% activation rate improvement</td></tr>
+    <tr><td>3</td><td>UC-7: Support Prediction</td><td>Customer support ticket data</td><td>Ingest Salesforce Service Cloud; join to CUSTOMER_PARTY_ACCOUNT_MAP_SFDC</td><td>20–35% escalation reduction</td></tr>
+    <tr><td>4</td><td>UC-9: Multi-Tenant Perf Analytics</td><td>Query/compute data at tenant grain</td><td>ACCOUNT_USAGE.QUERY_HISTORY Dynamic Tables by org</td><td>SLA compliance monitoring</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- APPENDIX -->
+<h2 id="feature-matrix">Appendix A: Snowflake Feature Capability Matrix</h2>
+<table>
+  <thead><tr><th>Feature</th><th>Currently in Use</th><th>Recommended For</th></tr></thead>
+  <tbody>
+    <tr><td>Dynamic Tables</td><td>Yes (LEGAL_ENTITY_DNB_SOURCE, PRODUCT_TERMS_ACCEPTANCE_ORGANIZATION)</td><td>DS-3 risk deltas, DS-4 RETL pipelines, UC-2 health scores, UC-5 ARR bridge</td></tr>
+    <tr><td>Cortex Analyst</td><td>No</td><td>DS-2 account intelligence, DS-5 SE pipeline, DS-1 MDM queries</td></tr>
+    <tr><td>Cortex ML</td><td>No</td><td>UC-2 churn risk, UC-5 revenue forecasting, DS-5 win probability</td></tr>
+    <tr><td>Cortex AI (AI_COMPLETE)</td><td>No</td><td>DS-3 vendor risk summaries, UC-4 engagement analysis</td></tr>
+    <tr><td>Alerts</td><td>No</td><td>DS-3 score drops, DS-4 RETL failures, UC-2 health thresholds</td></tr>
+    <tr><td>Error Tables</td><td>No</td><td>DS-4 RETL fault detection</td></tr>
+    <tr><td>Snowpipe Streaming</td><td>No</td><td>UC-1 product events, UC-3 meter events</td></tr>
+    <tr><td>Data Sharing</td><td>Yes (MDM_INTERFACES is shared with elementum_dx)</td><td>DS-2 enrichment distribution, DS-3 risk posture sharing</td></tr>
+    <tr><td>Snowpark</td><td>No</td><td>UC-2 health feature engineering, UC-5 waterfall models</td></tr>
+    <tr><td>SCD Type 2 (via dbt)</td><td>Yes (ADM_GLOBAL_PARTY_SNAPSHOT, SECURITY_SCORECARD_HISTORY, PANORAYS_HISTORY)</td><td>Expand to additional vendor security sources</td></tr>
+  </tbody>
+</table>
+
+<h2 id="marketplace">Appendix B: Marketplace Opportunities</h2>
+<table>
+  <thead><tr><th>Data Product</th><th>Provider</th><th>Use Cases Enabled</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>SaaS Benchmarks (State of the Cloud)</td><td>Bessemer Venture Partners / OpenView</td><td>UC-1, UC-5</td><td>Activation rate and ARR benchmarks for board reporting</td></tr>
+    <tr><td>Product Analytics Benchmarks</td><td>Multiple</td><td>UC-1</td><td>PLG funnel benchmarks for self-serve SaaS</td></tr>
+    <tr><td>IP-to-Company Enrichment</td><td>Clearbit, 6sense (Marketplace)</td><td>DS-2</td><td>Anonymous visitor → account matching to supplement Crunchbase</td></tr>
+  </tbody>
+</table>
+
+<h2 id="sources">Appendix C: External Data Sources Integrated</h2>
+<table>
+  <thead><tr><th>Source</th><th>Type</th><th>Volume</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td>Salesforce (SFDC)</td><td>CRM</td><td>360K+ accounts</td><td>Customer master, use case pipeline, enrichment target</td></tr>
+    <tr><td>Workday</td><td>HR/Finance</td><td>20K employees, 6.8K vendors</td><td>Employee master, supplier data</td></tr>
+    <tr><td>ServiceNow</td><td>ITSM/VRM</td><td>varies</td><td>Vendor relationship management</td></tr>
+    <tr><td>GitHub</td><td>Engineering</td><td>4.2M PRs, 21K daily metrics</td><td>Engineering activity analytics</td></tr>
+    <tr><td>Crunchbase</td><td>Market Intel</td><td>696K matches</td><td>Firmographic enrichment</td></tr>
+    <tr><td>FactSet</td><td>Financial Data</td><td>49.5M matches</td><td>Financial intelligence per account</td></tr>
+    <tr><td>D&B (Dun &amp; Bradstreet)</td><td>Identity</td><td>324K DUNS</td><td>Legal entity identity anchoring</td></tr>
+    <tr><td>S&amp;P Global</td><td>Financial</td><td>25M matches</td><td>Financial intelligence</td></tr>
+    <tr><td>Forbes Global 2000</td><td>Target Lists</td><td>varies</td><td>ICP account identification</td></tr>
+    <tr><td>SecurityScorecard</td><td>Vendor Security</td><td>SCD2 history</td><td>Continuous vendor security scoring</td></tr>
+    <tr><td>Panorays</td><td>Vendor Security</td><td>SCD2 history</td><td>Third-party risk scoring</td></tr>
+    <tr><td>Gong</td><td>Sales Intelligence</td><td>varies</td><td>Call intelligence via GONG_USER_HISTORY</td></tr>
+  </tbody>
+</table>
+
+<h2 id="methodology">Appendix D: Methodology</h2>
+<ul>
+  <li><strong>Vertical Detection:</strong> SFDC/Workday/ServiceNow/GitHub integration pattern + product terms/feature tables = Technology/SaaS (HIGH confidence). Score: PRIMARY (product, feature) × 3 + SECONDARY (user, session, engagement, pipeline, trial, ticket) × 7 ≈ 16/30 normalized</li>
+  <li><strong>Layer Classification:</strong> MDM_INTERFACES is a Gold interface schema — published, downstream-facing. Upstream processing is in MDM_SOURCES and MDM_MODELED schemas (not assessed here)</li>
+  <li><strong>Classification Criteria:</strong> READY = data + patterns fully present; NEAR = most data present, minor gaps (1–2 missing joins or features); GAP = fundamental data domain absent</li>
+  <li><strong>Impact Basis:</strong> Published industry benchmarks from Gartner, Forrester, McKinsey, vendor case studies. No entity-specific calibration performed.</li>
+  <li><strong>Limitations:</strong> This assessment covers MDM_INTERFACES only. Snowflake likely has additional analytics schemas (FINANCE, SALES, SNOWHOUSE) with complementary or overlapping use cases. Connecting MDM party master to those schemas would substantially improve canonical fit scores.</li>
+</ul>
+
+<hr>
+<p style="text-align: center; font-size: 12px; color: #9CA3AF; margin-top: 40px;">
+  Generated by Snowflake Value Map skill | Cortex Code | July 2, 2026
+</p>
+
+</main>
+
+<script>
+const sections = document.querySelectorAll('h2[id], h3[id]');
+const navLinks = document.querySelectorAll('.sidebar nav a');
+function updateActive() {
+  let current = '';
+  sections.forEach(section => {
+    if (section.getBoundingClientRect().top < 120) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+}
+window.addEventListener('scroll', updateActive);
+document.addEventListener('DOMContentLoaded', updateActive);
+navLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
