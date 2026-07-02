@@ -1,0 +1,17 @@
+# Python / virtualenvs
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# CoCo session artifacts
+semantic_view_*/
+*.part
+
+# Secrets / credentials
+.env
+*.toml
+*.ini
